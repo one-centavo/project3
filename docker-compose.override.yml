@@ -1,0 +1,35 @@
+services:
+  # Web Server
+  web:
+    deploy: {}
+    ports:
+      - "${FORWARD_NGINX_PORT:-8080}:80"
+    volumes:
+      - .:/var/www/html
+      - ./public:/var/www/html/public
+
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile.dev
+    deploy: {}
+    volumes:
+      - .:/var/www/html
+      - ./public:/var/www/html/public
+      - ./docker/php/msmtprc:/etc/msmtprc:ro
+    ports:
+      - "${VITE_PORT:-5173}:5173"
+
+  # Database
+  db:
+    deploy: {}
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+
+networks:
+  proxy-network:
+    external: false
+
+volumes:
+  proyecto3_mailpit_data:
