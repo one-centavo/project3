@@ -43,11 +43,17 @@ Practice project for offline data management and synchronization. This project c
     - _Correct:_ `feat(auth): add JWT validation middleware`
     - _Incorrect:_ `fix: corregido el error al iniciar sesión`
 
+- **Code Language:** All the code (variables names, functions, class, data bases, routes, tables and technical documentation) must be written exclusively in **English**.
+
+- **Self-documenting code:** The code must be clean and easy to read on its own. Only use comments if there is a complex architectural decision or a technical hack that requires contextual explanation.
+
 ## Do Not Do
 
 - Do not make a single giant commit at the end of a task; keep your commits atomic.
 - Do not use past-tense verbs in commit messages (e.g., do not use `added`, use `add`).
 - Do not mix code refactoring with new logic in the same commit.
+- **Do not comment on the obvious:** Writing comments that merely repeat what the code already does is strictly prohibited (e.g., do not write `// Inicializa el usuario` right above `const user = new User()`). If the code is clear, delete the comment.
+- **Do not mix languages (Spanglish):** Do not use variable names in Spanish or mixtures like `getUsuarios()` or `savedData_updated`. All backend logic and naming must be strictly in English.
 
 ## Workflow
 
