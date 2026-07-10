@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cliente;
+use App\Models\Client;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ClienteSyncController extends Controller
+class ClientSyncController extends Controller
 {
     /**
      * Synchronize client data from the local client application.
@@ -44,10 +44,10 @@ class ClienteSyncController extends Controller
 
         foreach ($clients as $clientData) {
 
-            $existingClient = Cliente::where('dni', $clientData['dni'])->first();
+            $existingClient = Client::where('dni', $clientData['dni'])->first();
 
             if (! $existingClient) {
-                $newClient = new Cliente;
+                $newClient = new Client;
                 $newClient->uuid = $clientData['uuid'];
                 $newClient->dni = $clientData['dni'];
                 $newClient->first_name = $clientData['first_name'];
