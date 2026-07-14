@@ -47,6 +47,11 @@ new class extends Component {
         window.addEventListener('offline', () => {
             this.isOnline = false;
         });
+        window.addEventListener('offline-db-ready', () => {
+            if (this.isOnline) {
+                this.syncOfflineClients();
+            }
+        });
         if (this.isOnline) {
             this.syncOfflineClients();
         }

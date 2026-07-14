@@ -22,9 +22,8 @@ async function keepClientInLocalDB(client) {
 
 async function getClientsForSync() {
     const db = await dbPromise;
-    const clientsForSync = await db.getAllFromIndex("clients", "for_sync", false);
-
-    return clientsForSync;
+    const allClients = await db.getAll("clients");
+    return allClients.filter(client => !client.is_sync);
 }
 
 async function markClientAsSynced(UuidList) {
@@ -45,3 +44,5 @@ async function markClientAsSynced(UuidList) {
 window.keepClientInLocalDB = keepClientInLocalDB;
 window.getClientsForSync = getClientsForSync;
 window.markClientAsSynced = markClientAsSynced;
+
+window.dispatchEvent(new CustomEvent("offline-db-ready"));
