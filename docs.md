@@ -10,7 +10,7 @@
 
 - Service Workers: Scripts en segundo plano que permiten la instalación de la PWA en Android y aseguran que la aplicación visual cargue incluso sin internet.
 
-- IndexedDB: Base de datos local e interna del navegador del celular donde Alpine.js guardará temporalmente los registros en formato JSON con el flag is_synced = false.
+- IndexedDB: Base de datos local e interna del navegador del celular donde Alpine.js guardará temporalmente los registros en formato JSON.
 
 ## Backend (Servidor en la Nube)
 
@@ -54,7 +54,7 @@ graph TD
     validationDni -->|No| F[Guardar registro nuevo en MySQL]
 
     %% CIERRE DEL PROCESO
-    D_SI --> fin_sync[Cambiar flag local a is_sync = TRUE]
+    D_SI --> fin_sync[Eliminar registro de IndexedDB]
     F --> fin_sync
     D_NO --> fin(Fin)
     fin_sync --> fin
