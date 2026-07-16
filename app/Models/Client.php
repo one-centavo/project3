@@ -49,7 +49,6 @@ class Client extends Model
         'email',
         'phone_number',
         'address',
-        'is_sync',
     ];
 
     /**
@@ -58,6 +57,5 @@ class Client extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_sync' => 'boolean',
     ];
 }
