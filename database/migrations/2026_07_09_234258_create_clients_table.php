@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('email', 255)->unique();
             $table->string('phone_number', 10)->unique();
             $table->string('address', 255);
-            $table->boolean('is_sync')->default(false);
             $table->timestamps();
         });
     }
