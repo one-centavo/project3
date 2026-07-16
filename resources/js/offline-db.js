@@ -157,7 +157,6 @@ document.addEventListener("alpine:init", () => {
                 email: this.email,
                 phone_number: this.phone_number,
                 address: this.address,
-                is_sync: false,
                 updated_at: new Date().toISOString(),
             };
 
