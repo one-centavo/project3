@@ -41,7 +41,6 @@ class ClientSyncTest extends TestCase
             'dni' => '1234567890',
             'first_name' => 'John',
             'email' => 'john.doe@example.com',
-            'is_sync' => true,
         ]);
     }
 }

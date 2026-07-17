@@ -3,18 +3,13 @@ import { openDB } from "idb";
 const dbPromise = openDB("clients-offline-db", 1, {
     upgrade(db) {
         if (!db.objectStoreNames.contains("clients")) {
-            const store = db.createObjectStore("clients", { keyPath: "uuid" });
-            store.createIndex("for_sync", "is_sync");
+            db.createObjectStore("clients", { keyPath: "uuid" });
         }
     },
 });
 
 async function keepClientInLocalDB(client) {
     const db = await dbPromise;
-
-    client.is_sync = false;
-    client.updated_at = new Date().toISOString();
-
     const tx = db.transaction("clients", "readwrite");
     await tx.store.put(client);
     await tx.done;
@@ -22,8 +17,7 @@ async function keepClientInLocalDB(client) {
 
 async function getClientsForSync() {
     const db = await dbPromise;
-    const allClients = await db.getAll("clients");
-    return allClients.filter((client) => !client.is_sync);
+    return await db.getAll("clients");
 }
 
 async function markClientAsSynced(UuidList) {
@@ -31,11 +25,7 @@ async function markClientAsSynced(UuidList) {
     const tx = db.transaction("clients", "readwrite");
 
     for (const uuid of UuidList) {
-        const client = await tx.store.get(uuid);
-        if (client) {
-            client.is_sync = true;
-            await tx.store.put(client);
-        }
+        await tx.store.delete(uuid);
     }
 
     await tx.done;
@@ -157,7 +147,6 @@ document.addEventListener("alpine:init", () => {
                 email: this.email,
                 phone_number: this.phone_number,
                 address: this.address,
-                is_sync: false,
                 updated_at: new Date().toISOString(),
             };
 

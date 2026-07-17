@@ -57,7 +57,6 @@ class ClientSyncController extends Controller
                 $newClient->email = $clientData['email'];
                 $newClient->phone_number = $clientData['phone_number'];
                 $newClient->address = $clientData['address'];
-                $newClient->is_sync = true;
 
                 $clientDate = Carbon::parse($clientData['updated_at']);
                 $newClient->created_at = $clientDate;
@@ -77,7 +76,6 @@ class ClientSyncController extends Controller
                     $existingClient->email = $clientData['email'];
                     $existingClient->phone_number = $clientData['phone_number'];
                     $existingClient->address = $clientData['address'];
-                    $existingClient->is_sync = true;
                     $existingClient->updated_at = $clientDate;
                     $existingClient->save();
                 }
