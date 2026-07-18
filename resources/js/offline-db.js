@@ -1,9 +1,16 @@
 import { openDB } from "idb";
 
-const dbPromise = openDB("clients-offline-db", 1, {
-    upgrade(db) {
-        if (!db.objectStoreNames.contains("clients")) {
-            db.createObjectStore("clients", { keyPath: "uuid" });
+const dbPromise = openDB("clients-offline-db", 2, {
+    upgrade(db, oldVersion) {
+        if (oldVersion < 1) {
+            if (!db.objectStoreNames.contains("clients")) {
+                db.createObjectStore("clients", { keyPath: "uuid" });
+            }
+        }
+        if (oldVersion < 2) {
+            if (!db.objectStoreNames.contains("server_indices")) {
+                db.createObjectStore("server_indices");
+            }
         }
     },
 });
