@@ -38,9 +38,35 @@ async function markClientAsSynced(UuidList) {
     await tx.done;
 }
 
+async function syncServerIndices() {
+    if (!navigator.onLine) return;
+    try {
+        const response = await fetch("/api/v1/clients/indices", {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+            },
+        });
+        const result = await response.json();
+        if (response.ok && result.status === "success") {
+            const db = await dbPromise;
+            const tx = db.transaction("server_indices", "readwrite");
+            await tx.store.put(result.data.dnis || [], "dni");
+            await tx.store.put(result.data.emails || [], "email");
+            await tx.store.put(result.data.phone_numbers || [], "phone_number");
+            await tx.done;
+        } else {
+            console.error("Failed to sync server indices:", result);
+        }
+    } catch (err) {
+        console.error("Error syncing server indices:", err);
+    }
+}
+
 window.keepClientInLocalDB = keepClientInLocalDB;
 window.getClientsForSync = getClientsForSync;
 window.markClientAsSynced = markClientAsSynced;
+window.syncServerIndices = syncServerIndices;
 
 window.dispatchEvent(new CustomEvent("offline-db-ready"));
 
