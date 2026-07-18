@@ -112,18 +112,22 @@ document.addEventListener("alpine:init", () => {
         init() {
             window.addEventListener("online", () => {
                 this.isOnline = true;
-                this.syncOfflineClients();
+                this.syncData();
             });
             window.addEventListener("offline", () => {
                 this.isOnline = false;
             });
             window.addEventListener("offline-db-ready", () => {
-                if (this.isOnline) {
-                    this.syncOfflineClients();
-                }
+                this.syncData();
             });
-            if (this.isOnline) {
-                this.syncOfflineClients();
+            this.syncData();
+        },
+
+        async syncData() {
+            if (!this.isOnline) return;
+            await this.syncOfflineClients();
+            if (typeof window.syncServerIndices === "function") {
+                await window.syncServerIndices();
             }
         },
 
