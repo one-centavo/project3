@@ -63,10 +63,34 @@ async function syncServerIndices() {
     }
 }
 
+async function isDuplicate(field, value) {
+    if (!value) return false;
+    const db = await dbPromise;
+
+    // 1. Check in pending local clients
+    const localClients = await db.getAll("clients");
+    const isLocalDuplicate = localClients.some(
+        (client) => client[field] && client[field].toString().trim().toLowerCase() === value.toString().trim().toLowerCase()
+    );
+    if (isLocalDuplicate) return true;
+
+    // 2. Check in synced server indices
+    const serverValues = await db.get("server_indices", field);
+    if (serverValues) {
+        const isServerDuplicate = serverValues.some(
+            (val) => val && val.toString().trim().toLowerCase() === value.toString().trim().toLowerCase()
+        );
+        if (isServerDuplicate) return true;
+    }
+
+    return false;
+}
+
 window.keepClientInLocalDB = keepClientInLocalDB;
 window.getClientsForSync = getClientsForSync;
 window.markClientAsSynced = markClientAsSynced;
 window.syncServerIndices = syncServerIndices;
+window.isDuplicate = isDuplicate;
 
 window.dispatchEvent(new CustomEvent("offline-db-ready"));
 
