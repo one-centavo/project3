@@ -161,7 +161,7 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        submitForm() {
+        async submitForm() {
             this.successMessage = "";
             this.errorMessage = "";
 
@@ -192,6 +192,21 @@ document.addEventListener("alpine:init", () => {
             if (!this.address || this.address.trim() === "") {
                 this.errorMessage = "Address is required.";
                 return;
+            }
+
+            if (typeof window.isDuplicate === "function") {
+                if (await window.isDuplicate("dni", this.dni)) {
+                    this.errorMessage = "DNI already exists.";
+                    return;
+                }
+                if (await window.isDuplicate("email", this.email)) {
+                    this.errorMessage = "Email already exists.";
+                    return;
+                }
+                if (await window.isDuplicate("phone_number", this.phone_number)) {
+                    this.errorMessage = "Phone Number already exists.";
+                    return;
+                }
             }
 
             const client = {
