@@ -23,7 +23,8 @@ new class extends Component {
             </div>
             <div>
                 <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Registrar Cliente</h2>
-                <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Vinculación de base de datos fuera de línea activada</p>
+                <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Vinculación de base de datos fuera de línea
+                    activada</p>
             </div>
         </div>
 
@@ -83,7 +84,7 @@ new class extends Component {
                 <div>
                     <label for="second_name"
                         class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                        Segundo Nombre <span class="text-gray-400 dark:text-gray-500 font-normal">(Opcional)</span>
+                        Segundo Nombre
                     </label>
                     <input type="text" id="second_name" x-model="second_name" placeholder="ej. Eduardo"
                         class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
@@ -104,7 +105,7 @@ new class extends Component {
                 <div>
                     <label for="second_last_name"
                         class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
-                        Segundo Apellido <span class="text-gray-400 dark:text-gray-500 font-normal">(Opcional)</span>
+                        Segundo Apellido
                     </label>
                     <input type="text" id="second_last_name" x-model="second_last_name" placeholder="ej. Gómez"
                         class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
