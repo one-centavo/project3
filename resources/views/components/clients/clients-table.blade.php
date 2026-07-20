@@ -123,13 +123,12 @@ new class extends Component {
                             <th scope="col" class="px-4 py-3">Email</th>
                             <th scope="col" class="px-4 py-3">Phone</th>
                             <th scope="col" class="px-4 py-3">Address</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-if="paginatedClients.length === 0">
                             <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                     No pending clients found.
                                 </td>
                             </tr>
@@ -141,11 +140,6 @@ new class extends Component {
                                 <td class="px-4 py-3" x-text="client.email"></td>
                                 <td class="px-4 py-3" x-text="client.phone_number"></td>
                                 <td class="px-4 py-3" x-text="client.address"></td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                                        Pending Sync
-                                    </span>
-                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -204,7 +198,6 @@ new class extends Component {
                             <th scope="col" class="px-4 py-3">Email</th>
                             <th scope="col" class="px-4 py-3">Phone</th>
                             <th scope="col" class="px-4 py-3">Address</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -220,15 +213,10 @@ new class extends Component {
                                 <td class="px-4 py-3">{{ $client->email }}</td>
                                 <td class="px-4 py-3">{{ $client->phone_number }}</td>
                                 <td class="px-4 py-3">{{ $client->address }}</td>
-                                <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
-                                        Synced
-                                    </span>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                     No synced clients found.
                                 </td>
                             </tr>
