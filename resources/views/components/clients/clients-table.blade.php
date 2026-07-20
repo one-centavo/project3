@@ -98,13 +98,13 @@ new class extends Component {
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Pending Sync</h2>
-                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Offline storage (IndexedDB)</p>
+                        <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Pendientes de Sincronizar</h2>
+                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Almacenamiento fuera de línea (IndexedDB)</p>
                     </div>
                 </div>
                 
                 <div class="relative w-full sm:w-64">
-                    <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="Search offline..." 
+                    <input type="text" x-model="searchQuery" @input="currentPage = 1" placeholder="Buscar fuera de línea..." 
                            class="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
@@ -119,17 +119,17 @@ new class extends Component {
                     <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-[#232321] rounded-t-lg">
                         <tr>
                             <th scope="col" class="px-4 py-3">DNI</th>
-                            <th scope="col" class="px-4 py-3">Full Name</th>
-                            <th scope="col" class="px-4 py-3">Email</th>
-                            <th scope="col" class="px-4 py-3">Phone</th>
-                            <th scope="col" class="px-4 py-3">Address</th>
+                            <th scope="col" class="px-4 py-3">Nombre Completo</th>
+                            <th scope="col" class="px-4 py-3">Correo Electrónico</th>
+                            <th scope="col" class="px-4 py-3">Teléfono</th>
+                            <th scope="col" class="px-4 py-3">Dirección</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-if="paginatedClients.length === 0">
                             <tr>
                                 <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
-                                    No pending clients found.
+                                    No se encontraron clientes pendientes.
                                 </td>
                             </tr>
                         </template>
@@ -148,15 +148,15 @@ new class extends Component {
 
             <template x-if="filteredClients.length > perPage">
                 <div class="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-[#3E3E3A] mt-6">
-                    <span class="text-xs text-[#706f6c] dark:text-[#A1A09A]" x-text="`Showing ${((currentPage-1)*perPage)+1} to ${Math.min(currentPage*perPage, filteredClients.length)} of ${filteredClients.length} entries`"></span>
+                    <span class="text-xs text-[#706f6c] dark:text-[#A1A09A]" x-text="`Mostrando ${((currentPage-1)*perPage)+1} a ${Math.min(currentPage*perPage, filteredClients.length)} de ${filteredClients.length} entradas`"></span>
                     <div class="inline-flex space-x-1">
                         <button @click="currentPage > 1 ? currentPage-- : null" :disabled="currentPage === 1" 
                                 class="px-3 py-1 text-xs border border-gray-200 dark:border-[#3E3E3A] rounded hover:bg-gray-50 dark:hover:bg-[#232321] text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                            Previous
+                            Anterior
                         </button>
                         <button @click="currentPage < totalPages ? currentPage++ : null" :disabled="currentPage === totalPages"
                                 class="px-3 py-1 text-xs border border-gray-200 dark:border-[#3E3E3A] rounded hover:bg-gray-50 dark:hover:bg-[#232321] text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                            Next
+                            Siguiente
                         </button>
                     </div>
                 </div>
@@ -173,13 +173,13 @@ new class extends Component {
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Synced Clients</h2>
-                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Cloud Database storage</p>
+                        <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Clientes Sincronizados</h2>
+                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Almacenamiento en base de datos en la nube</p>
                     </div>
                 </div>
                 
                 <div class="relative w-full sm:w-64">
-                    <input type="text" wire:model.live="search" placeholder="Search synced..." 
+                    <input type="text" wire:model.live="search" placeholder="Buscar sincronizados..." 
                            class="w-full pl-9 pr-4 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                     <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
@@ -194,10 +194,10 @@ new class extends Component {
                     <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-[#232321] rounded-t-lg">
                         <tr>
                             <th scope="col" class="px-4 py-3">DNI</th>
-                            <th scope="col" class="px-4 py-3">Full Name</th>
-                            <th scope="col" class="px-4 py-3">Email</th>
-                            <th scope="col" class="px-4 py-3">Phone</th>
-                            <th scope="col" class="px-4 py-3">Address</th>
+                            <th scope="col" class="px-4 py-3">Nombre Completo</th>
+                            <th scope="col" class="px-4 py-3">Correo Electrónico</th>
+                            <th scope="col" class="px-4 py-3">Teléfono</th>
+                            <th scope="col" class="px-4 py-3">Dirección</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -217,7 +217,7 @@ new class extends Component {
                         @empty
                             <tr>
                                 <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
-                                    No synced clients found.
+                                    No se encontraron clientes sincronizados.
                                 </td>
                             </tr>
                         @endforelse
