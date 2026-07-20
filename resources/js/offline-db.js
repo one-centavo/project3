@@ -155,6 +155,10 @@ document.addEventListener("alpine:init", () => {
                 if (response.ok && result.status === "success") {
                     const uuids = clients.map((c) => c.uuid);
                     await window.markClientAsSynced(uuids);
+                    window.dispatchEvent(new CustomEvent("client-synced"));
+                    if (window.Livewire) {
+                        window.Livewire.dispatch("client-synced");
+                    }
                 } else {
                     console.error("Synchronization failed:", result);
                 }
@@ -170,45 +174,45 @@ document.addEventListener("alpine:init", () => {
             this.errorMessage = "";
 
             if (!this.dni || this.dni.trim() === "") {
-                this.errorMessage = "DNI (ID Number) is required.";
+                this.errorMessage = "El DNI es requerido.";
                 return;
             }
             if (!this.first_name || this.first_name.trim() === "") {
-                this.errorMessage = "First Name is required.";
+                this.errorMessage = "El primer nombre es requerido.";
                 return;
             }
             if (!this.first_last_name || this.first_last_name.trim() === "") {
-                this.errorMessage = "First Last Name is required.";
+                this.errorMessage = "El primer apellido es requerido.";
                 return;
             }
             if (!this.email || this.email.trim() === "") {
-                this.errorMessage = "Email address is required.";
+                this.errorMessage = "El correo electrónico es requerido.";
                 return;
             }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
-                this.errorMessage = "Please enter a valid email address.";
+                this.errorMessage = "Por favor ingrese un correo electrónico válido.";
                 return;
             }
             if (!this.phone_number || this.phone_number.trim() === "") {
-                this.errorMessage = "Phone Number is required.";
+                this.errorMessage = "El número de teléfono es requerido.";
                 return;
             }
             if (!this.address || this.address.trim() === "") {
-                this.errorMessage = "Address is required.";
+                this.errorMessage = "La dirección es requerida.";
                 return;
             }
 
             if (typeof window.isDuplicate === "function") {
                 if (await window.isDuplicate("dni", this.dni)) {
-                    this.errorMessage = "DNI already exists.";
+                    this.errorMessage = "El DNI ya existe.";
                     return;
                 }
                 if (await window.isDuplicate("email", this.email)) {
-                    this.errorMessage = "Email already exists.";
+                    this.errorMessage = "El correo electrónico ya existe.";
                     return;
                 }
                 if (await window.isDuplicate("phone_number", this.phone_number)) {
-                    this.errorMessage = "Phone Number already exists.";
+                    this.errorMessage = "El número de teléfono ya existe.";
                     return;
                 }
             }
@@ -231,8 +235,12 @@ document.addEventListener("alpine:init", () => {
                     .keepClientInLocalDB(client)
                     .then(() => {
                         this.successMessage =
-                            "Client registered successfully (stored offline)!";
+                            "Cliente guardado correctamente";
                         this.resetForm();
+                        window.dispatchEvent(new CustomEvent("client-saved"));
+                        if (window.Livewire) {
+                            window.Livewire.dispatch("client-saved");
+                        }
 
                         if (this.isOnline) {
                             this.syncOfflineClients();
@@ -241,10 +249,10 @@ document.addEventListener("alpine:init", () => {
                     .catch((err) => {
                         console.error(err);
                         this.errorMessage =
-                            "Failed to save client offline. Please try again.";
+                            "No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.";
                     });
             } else {
-                this.errorMessage = "Offline database helper is not loaded.";
+                this.errorMessage = "El asistente de base de datos fuera de línea no está cargado.";
             }
         },
 
