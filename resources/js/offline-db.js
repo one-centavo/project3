@@ -155,6 +155,10 @@ document.addEventListener("alpine:init", () => {
                 if (response.ok && result.status === "success") {
                     const uuids = clients.map((c) => c.uuid);
                     await window.markClientAsSynced(uuids);
+                    window.dispatchEvent(new CustomEvent("client-synced"));
+                    if (window.Livewire) {
+                        window.Livewire.dispatch("client-synced");
+                    }
                 } else {
                     console.error("Synchronization failed:", result);
                 }
@@ -233,6 +237,10 @@ document.addEventListener("alpine:init", () => {
                         this.successMessage =
                             "Client registered successfully (stored offline)!";
                         this.resetForm();
+                        window.dispatchEvent(new CustomEvent("client-saved"));
+                        if (window.Livewire) {
+                            window.Livewire.dispatch("client-saved");
+                        }
 
                         if (this.isOnline) {
                             this.syncOfflineClients();
