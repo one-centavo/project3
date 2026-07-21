@@ -68,7 +68,19 @@ new class extends Component {
 };
 ?>
 
-<div x-data="{ isOpen: @entangle('isOpen') }" 
+<div x-data="editClientForm" 
+     x-init="
+        isOpen = @entangle('isOpen');
+        uuid = @entangle('uuid');
+        dni = @entangle('dni');
+        first_name = @entangle('first_name');
+        second_name = @entangle('second_name');
+        first_last_name = @entangle('first_last_name');
+        second_last_name = @entangle('second_last_name');
+        email = @entangle('email');
+        phone_number = @entangle('phone_number');
+        address = @entangle('address');
+     "
      x-show="isOpen" 
      class="fixed inset-0 z-50 overflow-hidden" 
      style="display: none;"
@@ -105,7 +117,7 @@ new class extends Component {
                     </div>
                     <div>
                         <h2 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">Editar Cliente</h2>
-                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Modificar información en base de datos remota</p>
+                        <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Modificar información de cliente</p>
                     </div>
                 </div>
                 <button type="button" @click="$wire.close()" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 focus:outline-none">
@@ -117,13 +129,25 @@ new class extends Component {
 
             <!-- Body (Scrollable Content) -->
             <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                <form wire:submit.prevent="update" id="edit-client-form" class="space-y-4">
+                <!-- Alpine Error Alert -->
+                <template x-if="errorMessage">
+                    <div class="flex items-center p-4 text-sm text-red-800 dark:text-red-300 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-100 dark:border-red-900 transition-all duration-300" role="alert">
+                        <svg class="shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9 4h2v8H9V4Zm1 10a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2Z"/>
+                        </svg>
+                        <div>
+                            <span class="font-medium">¡Advertencia!</span> <span x-text="errorMessage"></span>
+                        </div>
+                    </div>
+                </template>
+
+                <form @submit.prevent="submitForm" id="edit-client-form" class="space-y-4">
                     <!-- DNI Field -->
                     <div>
                         <label for="edit_dni" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                             DNI <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="edit_dni" wire:model="dni" placeholder="ej. 1234567890"
+                        <input type="text" id="edit_dni" x-model="dni" placeholder="ej. 1234567890"
                             class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                         @error('dni') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
@@ -134,7 +158,7 @@ new class extends Component {
                             <label for="edit_first_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Primer Nombre <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="edit_first_name" wire:model="first_name" placeholder="ej. Juan"
+                            <input type="text" id="edit_first_name" x-model="first_name" placeholder="ej. Juan"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('first_name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -142,7 +166,7 @@ new class extends Component {
                             <label for="edit_second_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Segundo Nombre
                             </label>
-                            <input type="text" id="edit_second_name" wire:model="second_name" placeholder="ej. Eduardo"
+                            <input type="text" id="edit_second_name" x-model="second_name" placeholder="ej. Eduardo"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('second_name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -154,7 +178,7 @@ new class extends Component {
                             <label for="edit_first_last_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Primer Apellido <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="edit_first_last_name" wire:model="first_last_name" placeholder="ej. Pérez"
+                            <input type="text" id="edit_first_last_name" x-model="first_last_name" placeholder="ej. Pérez"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('first_last_name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -162,7 +186,7 @@ new class extends Component {
                             <label for="edit_second_last_name" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Segundo Apellido
                             </label>
-                            <input type="text" id="edit_second_last_name" wire:model="second_last_name" placeholder="ej. Gómez"
+                            <input type="text" id="edit_second_last_name" x-model="second_last_name" placeholder="ej. Gómez"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('second_last_name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -174,7 +198,7 @@ new class extends Component {
                             <label for="edit_email" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Correo Electrónico <span class="text-red-500">*</span>
                             </label>
-                            <input type="email" id="edit_email" wire:model="email" placeholder="ej. juan.perez@example.com"
+                            <input type="email" id="edit_email" x-model="email" placeholder="ej. juan.perez@example.com"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('email') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -182,7 +206,7 @@ new class extends Component {
                             <label for="edit_phone_number" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                                 Número de Teléfono <span class="text-red-500">*</span>
                             </label>
-                            <input type="tel" id="edit_phone_number" wire:model="phone_number" placeholder="ej. 1234567890"
+                            <input type="tel" id="edit_phone_number" x-model="phone_number" placeholder="ej. 1234567890"
                                 class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                             @error('phone_number') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -193,7 +217,7 @@ new class extends Component {
                         <label for="edit_address" class="block mb-1.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
                             Dirección <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="edit_address" wire:model="address" placeholder="ej. Av. Siempreviva 742"
+                        <input type="text" id="edit_address" x-model="address" placeholder="ej. Av. Siempreviva 742"
                             class="w-full px-3.5 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#161615] text-[#1b1b18] dark:text-[#EDEDEC] focus:border-[#f53003] dark:focus:border-[#FF4433] focus:ring-1 focus:ring-[#f53003] focus:outline-none transition-all duration-200">
                         @error('address') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
