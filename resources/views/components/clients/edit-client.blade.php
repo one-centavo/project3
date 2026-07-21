@@ -68,19 +68,144 @@ new class extends Component {
 };
 ?>
 
-<div x-data="editClientForm" 
-     x-init="
-        isOpen = @entangle('isOpen');
-        uuid = @entangle('uuid');
-        dni = @entangle('dni');
-        first_name = @entangle('first_name');
-        second_name = @entangle('second_name');
-        first_last_name = @entangle('first_last_name');
-        second_last_name = @entangle('second_last_name');
-        email = @entangle('email');
-        phone_number = @entangle('phone_number');
-        address = @entangle('address');
-     "
+<div x-data="{
+    isOpen: @entangle('isOpen'),
+    uuid: @entangle('uuid'),
+    dni: @entangle('dni'),
+    first_name: @entangle('first_name'),
+    second_name: @entangle('second_name'),
+    first_last_name: @entangle('first_last_name'),
+    second_last_name: @entangle('second_last_name'),
+    email: @entangle('email'),
+    phone_number: @entangle('phone_number'),
+    address: @entangle('address'),
+
+    originalDni: '',
+    originalEmail: '',
+    originalPhoneNumber: '',
+
+    successMessage: '',
+    errorMessage: '',
+    isOnline: navigator.onLine,
+    isSyncing: false,
+
+    init() {
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+        });
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+        });
+        window.addEventListener('open-edit-client', (e) => {
+            const client = e.detail.client;
+            this.uuid = client.uuid;
+            this.dni = client.dni;
+            this.first_name = client.first_name;
+            this.second_name = client.second_name || '';
+            this.first_last_name = client.first_last_name;
+            this.second_last_name = client.second_last_name || '';
+            this.email = client.email;
+            this.phone_number = client.phone_number;
+            this.address = client.address;
+
+            this.originalDni = client.dni;
+            this.originalEmail = client.email;
+            this.originalPhoneNumber = client.phone_number;
+
+            this.successMessage = '';
+            this.errorMessage = '';
+            this.isOpen = true;
+        });
+    },
+
+    async submitForm() {
+        this.successMessage = '';
+        this.errorMessage = '';
+
+        if (!this.dni || this.dni.trim() === '') {
+            this.errorMessage = 'El DNI es requerido.';
+            return;
+        }
+        if (!this.first_name || this.first_name.trim() === '') {
+            this.errorMessage = 'El primer nombre es requerido.';
+            return;
+        }
+        if (!this.first_last_name || this.first_last_name.trim() === '') {
+            this.errorMessage = 'El primer apellido es requerido.';
+            return;
+        }
+        if (!this.email || this.email.trim() === '') {
+            this.errorMessage = 'El correo electrónico es requerido.';
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+            this.errorMessage = 'Por favor ingrese un correo electrónico válido.';
+            return;
+        }
+        if (!this.phone_number || this.phone_number.trim() === '') {
+            this.errorMessage = 'El número de teléfono es requerido.';
+            return;
+        }
+        if (!this.address || this.address.trim() === '') {
+            this.errorMessage = 'La dirección es requerida.';
+            return;
+        }
+
+        if (typeof window.isDuplicate === 'function') {
+            if (this.dni !== this.originalDni && await window.isDuplicate('dni', this.dni)) {
+                this.errorMessage = 'El DNI ya existe.';
+                return;
+            }
+            if (this.email !== this.originalEmail && await window.isDuplicate('email', this.email)) {
+                this.errorMessage = 'El correo electrónico ya existe.';
+                return;
+            }
+            if (this.phone_number !== this.originalPhoneNumber && await window.isDuplicate('phone_number', this.phone_number)) {
+                this.errorMessage = 'El número de teléfono ya existe.';
+                return;
+            }
+        }
+
+        if (this.isOnline) {
+            try {
+                await this.$wire.update();
+            } catch (err) {
+                console.error('Error during online update:', err);
+                this.errorMessage = 'No se pudo actualizar el cliente. Por favor intente de nuevo.';
+            }
+        } else {
+            const client = {
+                uuid: this.uuid,
+                dni: this.dni,
+                first_name: this.first_name,
+                second_name: this.second_name || null,
+                first_last_name: this.first_last_name,
+                second_last_name: this.second_last_name || null,
+                email: this.email,
+                phone_number: this.phone_number,
+                address: this.address,
+                updated_at: new Date().toISOString(),
+            };
+
+            if (typeof window.keepClientInLocalDB === 'function') {
+                try {
+                    await window.keepClientInLocalDB(client);
+                    this.successMessage = 'Cliente guardado correctamente fuera de línea';
+                    this.isOpen = false;
+                    window.dispatchEvent(new CustomEvent('client-saved'));
+                    if (window.Livewire) {
+                        window.Livewire.dispatch('client-saved');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.errorMessage = 'No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.';
+                }
+            } else {
+                this.errorMessage = 'El asistente de base de datos fuera de línea no está cargado.';
+            }
+        }
+    }
+}"
      x-show="isOpen" 
      class="fixed inset-0 z-50 overflow-hidden" 
      style="display: none;"
