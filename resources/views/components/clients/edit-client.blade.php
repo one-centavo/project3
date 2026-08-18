@@ -58,6 +58,8 @@ new class extends Component {
             $client->update($validated);
             $this->dispatch('client-saved');
             $this->close();
+        } else {
+            throw new \Exception("Client not found on server.");
         }
     }
 
@@ -135,15 +137,19 @@ new class extends Component {
         if (typeof window.keepClientInLocalDB === 'function') {
             try {
                 await window.keepClientInLocalDB(client);
-                this.successMessage = 'Cliente guardado correctamente fuera de línea';
+                this.successMessage = 'Cliente guardado correctamente';
                 this.isOpen = false;
                 window.dispatchEvent(new CustomEvent('client-saved'));
                 if (window.Livewire) {
                     window.Livewire.dispatch('client-saved');
                 }
+
+                if (navigator.onLine && typeof window.syncOfflineClients === 'function') {
+                    await window.syncOfflineClients();
+                }
             } catch (err) {
                 console.error(err);
-                this.errorMessage = 'No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.';
+                this.errorMessage = 'No se pudo guardar el cliente. Por favor intente de nuevo.';
             }
         } else {
             this.errorMessage = 'El asistente de base de datos fuera de línea no está cargado.';
@@ -198,7 +204,7 @@ new class extends Component {
             }
         }
 
-        if (this.isOnline) {
+        if (navigator.onLine) {
             try {
                 await this.$wire.update();
             } catch (err) {
