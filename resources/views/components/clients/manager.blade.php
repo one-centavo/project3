@@ -20,8 +20,10 @@ new class extends Component {
                 </p>
             </div>
 
-            <div x-data="{ isOnline: navigator.onLine }" x-init="window.addEventListener('online', () => isOnline = true);
-            window.addEventListener('offline', () => isOnline = false);" class="flex items-center">
+            <div x-data="{ isOnline: navigator.onLine }"
+                 @online.window="isOnline = true"
+                 @offline.window="isOnline = false"
+                 class="flex items-center">
                 <template x-if="isOnline">
                     <span
                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400 border border-green-200 dark:border-green-900/50">
