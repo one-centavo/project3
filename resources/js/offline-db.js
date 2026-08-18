@@ -86,10 +86,51 @@ async function isDuplicate(field, value) {
     return false;
 }
 
+let isSyncing = false;
+
+async function syncOfflineClients() {
+    if (isSyncing || !navigator.onLine) return;
+    if (
+        typeof getClientsForSync !== "function" ||
+        typeof markClientAsSynced !== "function"
+    ) {
+        return;
+    }
+    try {
+        const clients = await getClientsForSync();
+        if (clients.length === 0) return;
+        isSyncing = true;
+        const response = await fetch("/api/v1/clients/sync", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({ clients }),
+        });
+        const result = await response.json();
+        if (response.ok && result.status === "success") {
+            const uuids = clients.map((c) => c.uuid);
+            await markClientAsSynced(uuids);
+            window.dispatchEvent(new CustomEvent("client-synced"));
+            if (window.Livewire) {
+                window.Livewire.dispatch("client-synced");
+            }
+        } else {
+            console.error("Synchronization failed:", result);
+        }
+    } catch (err) {
+        console.error("Error during synchronization:", err);
+    } finally {
+        isSyncing = false;
+    }
+}
+
 window.keepClientInLocalDB = keepClientInLocalDB;
 window.getClientsForSync = getClientsForSync;
 window.markClientAsSynced = markClientAsSynced;
 window.syncServerIndices = syncServerIndices;
+window.syncOfflineClients = syncOfflineClients;
 window.isDuplicate = isDuplicate;
 
 window.dispatchEvent(new CustomEvent("offline-db-ready"));
@@ -132,40 +173,8 @@ document.addEventListener("alpine:init", () => {
         },
 
         async syncOfflineClients() {
-            if (this.isSyncing || !this.isOnline) return;
-            if (
-                typeof window.getClientsForSync !== "function" ||
-                typeof window.markClientAsSynced !== "function"
-            ) {
-                return;
-            }
-            try {
-                const clients = await window.getClientsForSync();
-                if (clients.length === 0) return;
-                this.isSyncing = true;
-                const response = await fetch("/api/v1/clients/sync", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({ clients }),
-                });
-                const result = await response.json();
-                if (response.ok && result.status === "success") {
-                    const uuids = clients.map((c) => c.uuid);
-                    await window.markClientAsSynced(uuids);
-                    window.dispatchEvent(new CustomEvent("client-synced"));
-                    if (window.Livewire) {
-                        window.Livewire.dispatch("client-synced");
-                    }
-                } else {
-                    console.error("Synchronization failed:", result);
-                }
-            } catch (err) {
-                console.error("Error during synchronization:", err);
-            } finally {
-                this.isSyncing = false;
+            if (typeof window.syncOfflineClients === "function") {
+                await window.syncOfflineClients();
             }
         },
 
@@ -231,26 +240,22 @@ document.addEventListener("alpine:init", () => {
             };
 
             if (typeof window.keepClientInLocalDB === "function") {
-                window
-                    .keepClientInLocalDB(client)
-                    .then(() => {
-                        this.successMessage =
-                            "Cliente guardado correctamente";
-                        this.resetForm();
-                        window.dispatchEvent(new CustomEvent("client-saved"));
-                        if (window.Livewire) {
-                            window.Livewire.dispatch("client-saved");
-                        }
+                try {
+                    await window.keepClientInLocalDB(client);
+                    this.successMessage = "Cliente guardado correctamente";
+                    this.resetForm();
+                    window.dispatchEvent(new CustomEvent("client-saved"));
+                    if (window.Livewire) {
+                        window.Livewire.dispatch("client-saved");
+                    }
 
-                        if (this.isOnline) {
-                            this.syncOfflineClients();
-                        }
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        this.errorMessage =
-                            "No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.";
-                    });
+                    if (navigator.onLine) {
+                        await this.syncOfflineClients();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.errorMessage = "No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.";
+                }
             } else {
                 this.errorMessage = "El asistente de base de datos fuera de línea no está cargado.";
             }
