@@ -58,5 +58,7 @@ new class extends Component {
 
         </div>
 
+        <livewire:clients.edit-client />
+
     </div>
 </div>

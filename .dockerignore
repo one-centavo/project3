@@ -1,0 +1,39 @@
+# Version control
+.git
+.gitignore
+
+# Docker files
+docker-compose*.yml
+docker-compose*.yaml
+.dockerignore
+docker/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Composer and node dependencies
+node_modules/
+vendor/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+composer.lock
+
+# Cache and temporary files
+.phpunit.result.cache
+.phpunit.cache/
+.pnpm-store/
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+/.agents

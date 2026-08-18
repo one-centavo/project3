@@ -123,12 +123,13 @@ new class extends Component {
                             <th scope="col" class="px-4 py-3">Correo Electrónico</th>
                             <th scope="col" class="px-4 py-3">Teléfono</th>
                             <th scope="col" class="px-4 py-3">Dirección</th>
+                            <th scope="col" class="px-4 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-if="paginatedClients.length === 0">
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                     No se encontraron clientes pendientes.
                                 </td>
                             </tr>
@@ -140,6 +141,16 @@ new class extends Component {
                                 <td class="px-4 py-3" x-text="client.email"></td>
                                 <td class="px-4 py-3" x-text="client.phone_number"></td>
                                 <td class="px-4 py-3" x-text="client.address"></td>
+                                <td class="px-4 py-3 text-right">
+                                    <button type="button" 
+                                            @click="window.dispatchEvent(new CustomEvent('open-edit-client', { detail: { client: client } }))"
+                                            class="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gray-50 hover:bg-gray-100 text-gray-700 dark:bg-[#232321] dark:hover:bg-[#2e2e2b] dark:text-gray-300 border border-gray-200 dark:border-[#3E3E3A] rounded-md transition-all duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1 text-[#f53003] dark:text-[#FF4433]">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                        </svg>
+                                        Editar
+                                    </button>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -198,6 +209,7 @@ new class extends Component {
                             <th scope="col" class="px-4 py-3">Correo Electrónico</th>
                             <th scope="col" class="px-4 py-3">Teléfono</th>
                             <th scope="col" class="px-4 py-3">Dirección</th>
+                            <th scope="col" class="px-4 py-3 text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -213,10 +225,20 @@ new class extends Component {
                                 <td class="px-4 py-3">{{ $client->email }}</td>
                                 <td class="px-4 py-3">{{ $client->phone_number }}</td>
                                 <td class="px-4 py-3">{{ $client->address }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <button type="button" 
+                                            @click="window.dispatchEvent(new CustomEvent('open-edit-client', { detail: { client: {{ json_encode($client) }} } }))"
+                                            class="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gray-50 hover:bg-gray-100 text-gray-700 dark:bg-[#232321] dark:hover:bg-[#2e2e2b] dark:text-gray-300 border border-gray-200 dark:border-[#3E3E3A] rounded-md transition-all duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 mr-1 text-[#f53003] dark:text-[#FF4433]">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                        </svg>
+                                        Editar
+                                    </button>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                     No se encontraron clientes sincronizados.
                                 </td>
                             </tr>

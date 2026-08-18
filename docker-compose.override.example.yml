@@ -1,19 +1,22 @@
 services:
   # Web Server
-  web:
-    deploy: {}
+  web-proyecto3:
+    deploy: !reset
+    restart: "no"
     ports:
       - "${FORWARD_NGINX_PORT:-8080}:80"
     volumes:
       - .:/var/www/html
       - ./public:/var/www/html/public
+      - ./docker/nginx/default.dev.conf:/etc/nginx/conf.d/default.conf
 
   # Application
-  app:
+  app-proyecto3:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.dev
-    deploy: {}
+    deploy: !reset
+    restart: "no"
     volumes:
       - .:/var/www/html
       - ./public:/var/www/html/public
@@ -22,10 +25,24 @@ services:
       - "${VITE_PORT:-5173}:5173"
 
   # Database
-  db:
-    deploy: {}
+  db-proyecto3:
+    deploy: !reset
+    restart: "no"
     ports:
       - "${FORWARD_DB_PORT:-3306}:3306"
+
+  # Mailpit
+  mailpit-proyecto3:
+    container_name: mailpit-proyecto3
+    image: axllent/mailpit
+    restart: "no"
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web Dashboard port
+    volumes:
+      - proyecto3_mailpit_data:/data
+    networks:
+      - proyecto3-network
 
 networks:
   proxy-network:
