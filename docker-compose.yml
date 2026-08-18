@@ -1,7 +1,7 @@
 services:
     # Web Server
-    web:
-        container_name: proyecto3-nginx
+    web-proyecto3:
+        container_name: web-proyecto3
         image: nginx:alpine
         deploy:
             resources:
@@ -13,15 +13,15 @@ services:
             - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - proyecto3_public_assets:/var/www/html/public
         depends_on:
-            - app
+            - app-proyecto3
         networks:
             - proyecto3-network
             - proxy-network
         restart: always
 
     # Laravel Application
-    app:
-        container_name: proyecto3-app
+    app-proyecto3:
+        container_name: app-proyecto3
         build:
             context: .
             dockerfile: docker/php/Dockerfile
@@ -43,8 +43,8 @@ services:
         restart: always
 
     # Database
-    db:
-        container_name: proyecto3-mysql
+    db-proyecto3:
+        container_name: db-proyecto3
         image: mysql:8.0
         deploy:
             resources:
