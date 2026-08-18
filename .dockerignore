@@ -16,10 +16,6 @@ docker/
 # Composer and node dependencies
 node_modules/
 vendor/
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
-composer.lock
 
 # Cache and temporary files
 .phpunit.result.cache
