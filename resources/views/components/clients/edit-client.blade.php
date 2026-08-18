@@ -118,6 +118,38 @@ new class extends Component {
         });
     },
 
+    async saveOffline() {
+        const client = {
+            uuid: this.uuid,
+            dni: this.dni,
+            first_name: this.first_name,
+            second_name: this.second_name || null,
+            first_last_name: this.first_last_name,
+            second_last_name: this.second_last_name || null,
+            email: this.email,
+            phone_number: this.phone_number,
+            address: this.address,
+            updated_at: new Date().toISOString(),
+        };
+
+        if (typeof window.keepClientInLocalDB === 'function') {
+            try {
+                await window.keepClientInLocalDB(client);
+                this.successMessage = 'Cliente guardado correctamente fuera de línea';
+                this.isOpen = false;
+                window.dispatchEvent(new CustomEvent('client-saved'));
+                if (window.Livewire) {
+                    window.Livewire.dispatch('client-saved');
+                }
+            } catch (err) {
+                console.error(err);
+                this.errorMessage = 'No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.';
+            }
+        } else {
+            this.errorMessage = 'El asistente de base de datos fuera de línea no está cargado.';
+        }
+    },
+
     async submitForm() {
         this.successMessage = '';
         this.errorMessage = '';
@@ -170,46 +202,18 @@ new class extends Component {
             try {
                 await this.$wire.update();
             } catch (err) {
-                console.error('Error during online update:', err);
-                this.errorMessage = 'No se pudo actualizar el cliente. Por favor intente de nuevo.';
+                console.warn('Online update failed, falling back to offline saving:', err);
+                await this.saveOffline();
             }
         } else {
-            const client = {
-                uuid: this.uuid,
-                dni: this.dni,
-                first_name: this.first_name,
-                second_name: this.second_name || null,
-                first_last_name: this.first_last_name,
-                second_last_name: this.second_last_name || null,
-                email: this.email,
-                phone_number: this.phone_number,
-                address: this.address,
-                updated_at: new Date().toISOString(),
-            };
-
-            if (typeof window.keepClientInLocalDB === 'function') {
-                try {
-                    await window.keepClientInLocalDB(client);
-                    this.successMessage = 'Cliente guardado correctamente fuera de línea';
-                    this.isOpen = false;
-                    window.dispatchEvent(new CustomEvent('client-saved'));
-                    if (window.Livewire) {
-                        window.Livewire.dispatch('client-saved');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    this.errorMessage = 'No se pudo guardar el cliente fuera de línea. Por favor intente de nuevo.';
-                }
-            } else {
-                this.errorMessage = 'El asistente de base de datos fuera de línea no está cargado.';
-            }
+            await this.saveOffline();
         }
     }
 }"
      x-show="isOpen" 
      class="fixed inset-0 z-50 overflow-hidden" 
      style="display: none;"
-     @keydown.escape.window="$wire.close()">
+     @keydown.escape.window="isOpen = false">
     
     <div x-show="isOpen" 
          x-transition:enter="ease-out duration-300"
@@ -219,7 +223,7 @@ new class extends Component {
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 bg-gray-500/75 dark:bg-black/80 backdrop-blur-sm transition-opacity" 
-         @click="$wire.close()">
+         @click="isOpen = false">
     </div>
 
     <div class="fixed inset-0 flex items-center justify-center p-4 md:p-0 md:justify-end">
@@ -245,7 +249,7 @@ new class extends Component {
                         <p class="text-xs text-[#706f6c] dark:text-[#A1A09A]">Modificar información de cliente</p>
                     </div>
                 </div>
-                <button type="button" @click="$wire.close()" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 focus:outline-none">
+                <button type="button" @click="isOpen = false" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
@@ -351,7 +355,7 @@ new class extends Component {
 
             <!-- Footer -->
             <div class="px-6 py-4 border-t border-gray-100 dark:border-[#3E3E3A] flex items-center justify-end space-x-3 bg-gray-50 dark:bg-[#161615]">
-                <button type="button" @click="$wire.close()" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#232321] rounded-md transition-all duration-200">
+                <button type="button" @click="isOpen = false" class="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#232321] rounded-md transition-all duration-200">
                     Cancelar
                 </button>
                 <button type="submit" form="edit-client-form" class="px-4 py-2 bg-[#1b1b18] hover:bg-black text-white dark:bg-[#eeeeec] dark:hover:bg-white dark:text-[#1C1C1A] font-semibold text-sm rounded-md transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#f53003] dark:focus:ring-white">
