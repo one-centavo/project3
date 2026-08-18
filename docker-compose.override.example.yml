@@ -1,6 +1,6 @@
 services:
   # Web Server
-  web:
+  web-proyecto3:
     deploy: !reset
     restart: "no"
     ports:
@@ -11,7 +11,7 @@ services:
       - ./docker/nginx/default.dev.conf:/etc/nginx/conf.d/default.conf
 
   # Application
-  app:
+  app-proyecto3:
     build:
       context: .
       dockerfile: docker/php/Dockerfile.dev
@@ -25,14 +25,14 @@ services:
       - "${VITE_PORT:-5173}:5173"
 
   # Database
-  db:
+  db-proyecto3:
     deploy: !reset
     restart: "no"
     ports:
       - "${FORWARD_DB_PORT:-3306}:3306"
 
   # Mailpit
-  mailpit:
+  mailpit-proyecto3:
     container_name: mailpit-proyecto3
     image: axllent/mailpit
     restart: "no"
