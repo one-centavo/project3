@@ -1,7 +1,7 @@
 services:
     # Web Server
     web:
-        container_name: proyecto3-nginx
+        container_name: web-proyecto3
         image: nginx:alpine
         deploy:
             resources:
@@ -21,7 +21,7 @@ services:
 
     # Laravel Application
     app:
-        container_name: proyecto3-app
+        container_name: app-proyecto3
         build:
             context: .
             dockerfile: docker/php/Dockerfile
@@ -44,7 +44,7 @@ services:
 
     # Database
     db:
-        container_name: proyecto3-mysql
+        container_name: db-proyecto3
         image: mysql:8.0
         deploy:
             resources:
